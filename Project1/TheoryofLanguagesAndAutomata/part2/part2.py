@@ -14,13 +14,13 @@ def find_node(str):
             return node
 nodes = []
 
-states_ad = open('C:\git\TLA01-Projects\TheoryofLanguagesAndAutomata\samples\phase2-sample\in\input1.json')
+states_ad = open('C:\git\TheoryofLanguagesAndAutomata\Project1\TheoryofLanguagesAndAutomata\samples\phase2-sample\in\input1.json')
 nfa = json.load(states_ad)
 states = nfa['states']
 states = states.replace("{", "").replace("}", "").replace("'", "").split(',')
 alphabets = nfa['input_symbols']
 alphabets = alphabets.replace("{", "").replace("}", "").replace("'", "").split(',')
-fs = nfa['final_states'].replace("{", "").replace("}", "").replace("'", "").split(',')
+fs_str = nfa['final_states'].replace("{", "").replace("}", "").replace("'", "").split(',')
 nodes = []
 starting_state_str = nfa['initial_state']
 tans = nfa["transitions"]
@@ -60,6 +60,9 @@ def reachable(list , current_state):
 
 #reachable nodes from initial state
 starting_state = find_node(starting_state_str)
+fs = []
+for s in fs_str:
+    fs.append(find_node(s))
 R_nodes = reachable([starting_state] , starting_state)
 
 T1_rows = fs
@@ -136,8 +139,4 @@ for action in T2_rows :
     action.name = "f1"
    
 result = reduce_table(T, [notfinal_i, final_i], 0)
-count =0 
-for item in result :
-    if item != []:
-        count += 1
-print(count)
+print(result)
