@@ -22,8 +22,9 @@ class Node1 :
     def add_name(self, name):
         self.name1.append(name)
     def changename(self):
+        self.name1.sort(key=lambda x: int(x[1]))
         for n in self.name1:
-            self.name += n.name
+            self.name += n
 
 
 
@@ -161,8 +162,8 @@ def convert2json_DFA(states, input_symbols, starting_node, fs):
             else:
                 transitions_str[f"{state.name}"][f"{input_symbol}"] = str(state.actions[input_symbol][0].name)
 
-    dictionary = {"states":items[0], "input_symbol": items[1],
-                 "transition":transitions_str,
+    dictionary = {"states":items[0], "input_symbols": items[1],
+                 "transitions":transitions_str,
                  "initial_state":str(starting_node.name), "final_states":items[2]}
 
     jsonFile = json.dumps(dictionary,indent=4)
@@ -206,8 +207,8 @@ def convert2json_NFA(states, input_symbols, starting_node, fs):
 
 
 
-    dictionary = {"states":items[0], "input_symbol": items[1],
-                 "transition":transitions_str,
+    dictionary = {"states":items[0], "input_symbols": items[1],
+                 "transitions":transitions_str,
                  "initial_state":str(starting_node.name), "final_states":items[2]}
 
     jsonFile = json.dumps(dictionary,indent=4)
@@ -216,6 +217,7 @@ def convert2json_NFA(states, input_symbols, starting_node, fs):
 
 convert(newstates[0])
 result = newstates
+
 def listtonode(result):
     ListOfnode = []
     for i in range(len(result)):
@@ -225,6 +227,11 @@ def listtonode(result):
                 if(not result[i][j].name in node2append.name):
                     node2append.add_name(result[i][j].name)
             ListOfnode.append(node2append)
+        else:
+            toappend = Node1(alphabets)
+            toappend.name1 = []
+            toappend.name = "TRAP"
+            ListOfnode.append(toappend)
     return ListOfnode
 
 listofnode = listtonode(result)
@@ -234,27 +241,30 @@ def find_node2(namelist,nodes):
         if node.name1 == namelist :
             return node
         
-def addactions(result,listofnodes):
-    resultlist = []
+def addactions(result,listofnodes):  
     for i in range(len(result)):
-        node2findname = []
+        names = []
         for a in alphabets:
+            state2go = []
             for j in range(len(result[i])):
-                if(not result[i][j].name in node2findname):
-                    node2findname.append(result[i][j].name)
-                    if (len(result[i][j].actions[a])!=0):
-                        state2go = []
-                        for k in range(len(result[i][j].actions[a])):
-                            state2go.append(result[i][j].actions[a][k].name)
-                        findstate = find_node2(state2go,listofnodes)
-                        here_node = find_node2(node2findname,listofnodes)
-                        here_node.add_action(a,findstate)
+                if(result[i][j].name not in names): 
+                    names.append(result[i][j].name)
+                if (len(result[i][j].actions[a])!=0):
+                    for k in range(len(result[i][j].actions[a])):
+                        state2go.append(result[i][j].actions[a][k].name)
+            findstate = find_node2(state2go,listofnodes)
+            here_node = find_node2(names,listofnodes)
+            here_node.add_action(a,findstate)
 
 
-lr =addactions(result,listofnode)
+lr = addactions(result,listofnode)
 
 for node in listofnode:
     node.name1.sort(key=lambda x: int(x[1]))
+
+
+for node in listofnode:
+    node.changename()
 
 fss = []
 for i in range(len(listofnode)):
@@ -263,8 +273,8 @@ for i in range(len(listofnode)):
             fss.append(listofnode[i])
             break
 
-
-print(listofnode)
-print("ddd")
-print([x.name1 for x in fss])
-print([x.name for x in fs])
+starting_node = listofnode[0]
+json1 = convert2json_DFA(listofnode,alphabets,starting_node,fss)
+print(json1)
+with open("output1.json", "w") as outfile:
+    outfile.write(json1)
