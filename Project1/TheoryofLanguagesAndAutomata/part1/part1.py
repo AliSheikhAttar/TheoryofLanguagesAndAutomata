@@ -10,6 +10,19 @@ class Node :
     def add_action(self , action , node):
         self.actions[action].append (node)
 
+class Node1 :
+    def __init__(self, alphabets):
+        self.name = []
+        self.actions = {'$' :[] ,}
+        for alphabet in alphabets :
+            self.actions[alphabet] = []
+    def add_action(self , action , node):
+        self.actions[action].append (node)
+    def add_name(self, name):
+        self.name.append(name)
+
+
+
 def find_node(str):
     for node in nodes :
         if node.name == str :
@@ -31,9 +44,9 @@ for state in states :
     nodes.append(n)
 
 
-
-
+landa_transitions = []
 for key,value in tans.items():
+    
     start = find_node(key)
     for key1,value1 in value.items():
         ends = value1.replace("{", "").replace("}", "").replace("'", "").split(',')
@@ -41,10 +54,17 @@ for key,value in tans.items():
         if(key1==""):   
             for end in ends:
                 start.add_action("$",end)
+                landa_transitions.append([start,end])
         else:
             for end in ends:
                 start.add_action(key1,end)
-    
+
+for i in range(len(landa_transitions)):
+    for j in range(len(nodes)):
+        for key,value in nodes[j].actions.items():
+            if (landa_transitions[i][0] in value):
+                nodes[j].add_action(key,landa_transitions[i][1])
+
 
 
 def repeatd(arr):
@@ -185,3 +205,44 @@ def convert2json_NFA(states, input_symbols, starting_node, fs):
 
     jsonFile = json.dumps(dictionary,indent=4)
     return jsonFile
+
+
+
+result = newstates
+def listtonode(result):
+    ListOfnode = []
+    for i in range(len(result)):
+        if (len(result[i])!=0):
+            node2append = Node1(alphabets=alphabets)
+            for j in range(len(result[i])):
+                if(not result[i][j].name in node2append.name):
+                    node2append.add_name(result[i][j].name)
+            ListOfnode.append(node2append)
+    return ListOfnode
+
+listofnode = listtonode(result)
+
+def find_node2(namelist,nodes):
+    for node in nodes :
+        if node.name == namelist :
+            return node
+        
+def addactions(result,listofnodes):
+    resultlist = []
+    for i in range(len(result)):
+        node2findname = []
+        for a in alphabets:
+            for j in range(len(result[i])):
+                if(not result[i][j].name in node2findname):
+                    node2findname.append(result[i][j].name)
+                    if (len(result[i][j].actions[a])!=0):
+                        state2go = []
+                        for k in range(len(result[i][j].actions[a])):
+                            state2go.append(result[i][j].actions[a][k].name)
+                        findstate = find_node2(state2go,listofnodes)
+                        findstate.add_action(a,state2go)
+            resultlist.append(findstate)
+    return resultlist
+
+lr =addactions(result,listofnode)
+
