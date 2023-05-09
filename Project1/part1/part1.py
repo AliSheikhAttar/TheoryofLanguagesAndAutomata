@@ -12,14 +12,20 @@ class Node :
 
 class Node1 :
     def __init__(self, alphabets):
-        self.name = []
+        self.name1 = []
+        self.name = ""
         self.actions = {'$' :[] ,}
         for alphabet in alphabets :
             self.actions[alphabet] = []
     def add_action(self , action , node):
         self.actions[action].append (node)
     def add_name(self, name):
-        self.name.append(name)
+        self.name1.append(name)
+    def changename(self):
+        for n in self.name1:
+            self.name += n.name
+
+
 
 
 
@@ -28,7 +34,8 @@ def find_node(str):
         if node.name == str :
             return node
         
-states_ad = open('C:\git\TheoryofLanguagesAndAutomata\Project1\TheoryofLanguagesAndAutomata\samples\phase1-sample\in\input1.json')
+        
+states_ad = open('C:\git\TheoryofLanguagesAndAutomata\Project1\samples\phase1-sample\in\input1.json')
 nfa = json.load(states_ad)
 states = nfa['states']
 states = states.replace("{", "").replace("}", "").replace("'", "").split(',')
@@ -207,7 +214,7 @@ def convert2json_NFA(states, input_symbols, starting_node, fs):
     return jsonFile
 
 
-
+convert(newstates[0])
 result = newstates
 def listtonode(result):
     ListOfnode = []
@@ -224,7 +231,7 @@ listofnode = listtonode(result)
 
 def find_node2(namelist,nodes):
     for node in nodes :
-        if node.name == namelist :
+        if node.name1 == namelist :
             return node
         
 def addactions(result,listofnodes):
@@ -240,9 +247,15 @@ def addactions(result,listofnodes):
                         for k in range(len(result[i][j].actions[a])):
                             state2go.append(result[i][j].actions[a][k].name)
                         findstate = find_node2(state2go,listofnodes)
-                        findstate.add_action(a,state2go)
-            resultlist.append(findstate)
-    return resultlist
+                        here_node = find_node2(node2findname,listofnodes)
+                        here_node.add_action(a,findstate)
+
 
 lr =addactions(result,listofnode)
 
+
+fss = []
+for i in range(len(result)):
+    for nod in result[i]:
+        if(nod in fs):
+            fss.append(listofnode[i])
