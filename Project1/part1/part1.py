@@ -253,9 +253,18 @@ def addactions(result,listofnodes):
 
 lr =addactions(result,listofnode)
 
+for node in listofnode:
+    node.name1.sort(key=lambda x: int(x[1]))
 
 fss = []
-for i in range(len(result)):
-    for nod in result[i]:
-        if(nod in fs):
+for i in range(len(listofnode)):
+    for s in listofnode[i].name1:  
+        if(find_node(s) in fs):
             fss.append(listofnode[i])
+            break
+
+
+print(listofnode)
+print("ddd")
+print([x.name1 for x in fss])
+print([x.name for x in fs])
