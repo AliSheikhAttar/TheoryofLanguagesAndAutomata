@@ -9,15 +9,15 @@ class Node :
             self.actions[alphabet] = []
     def add_action(self , action , node):
         self.actions[action].append (node)
-        
-    nodes = []
 
-def find_node(str):
+
+def find_node(str,nodes):
     for node in nodes :
         if node.name == str :
             return node
 
 def json2code(states_ad):
+    nodes = []
     states_ad = open(states_ad)
     nfa = json.load(states_ad)
     states = nfa['states']
@@ -25,6 +25,7 @@ def json2code(states_ad):
     alphabets = nfa['input_symbols']
     alphabets = alphabets.replace("{", "").replace("}", "").replace("'", "").split(',')
     fs_str = nfa['final_states'].replace("{", "").replace("}", "").replace("'", "").split(',')
+    
     starting_node_str = nfa['initial_state']
     tans = nfa["transitions"]
 
@@ -36,10 +37,10 @@ def json2code(states_ad):
     landa_transitions = []
     for key,value in tans.items():
         
-        start = find_node(key)
+        start = find_node(key,nodes)
         for key1,value1 in value.items():
             ends = value1.replace("{", "").replace("}", "").replace("'", "").split(',')
-            ends = [find_node(x) for x in ends]
+            ends = [find_node(x,nodes) for x in ends]
             if(key1==""):   
                 for end in ends:
                     start.add_action("$",end)
@@ -54,10 +55,10 @@ def json2code(states_ad):
                 if (landa_transitions[i][0] in value):
                     nodes[j].add_action(key,landa_transitions[i][1])
     
-    fs = [find_node(x) for x in fs_str]
-    starting_node = find_node(starting_node_str)
+    fs = [find_node(x,nodes) for x in fs_str]
+    starting_node = find_node(starting_node_str,nodes)
 
-    return nodes,starting_node,fs
+    return alphabets,nodes,starting_node,fs
 
 
 

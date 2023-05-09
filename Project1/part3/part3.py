@@ -7,7 +7,7 @@ class Node :
         a = (action , node)
         self.actions.append(a)
 
-states_ad = open('C:\git\TLA01-Projects\TheoryofLanguagesAndAutomata\samples\phase3-sample\in\input1.json')
+states_ad = open('C:\git\TheoryofLanguagesAndAutomata\Project1\samples\phase3-sample\in\input1.json')
 nfa = json.load(states_ad)
 states = nfa['states']
 states = states.replace("{", "").replace("}", "").replace("'", "").split(',')

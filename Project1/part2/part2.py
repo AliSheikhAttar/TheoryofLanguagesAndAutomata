@@ -1,47 +1,9 @@
-import json
-class Node :
-    def __init__(self , n , alphabets):
-        self.name = n
-        self.actions = {}
-        for alphabet in alphabets :
-            self.actions[alphabet] = None
-    def add_action(self , action , node):
-        self.actions[action] = node
+import json, sys, os
 
-def find_node(str):
-    for node in nodes :
-        if node.name == str :
-            return node
-nodes = []
+SCRIPT_DIR = os.path.dirname(os.path.abspath('auxiliaries.py'))
+sys.path.append(os.path.dirname('C:\git\TheoryofLanguagesAndAutomata\Project1\auxiliaries.py'))
 
-states_ad = open('C:\git\TheoryofLanguagesAndAutomata\Project1\TheoryofLanguagesAndAutomata\samples\phase2-sample\in\input1.json')
-nfa = json.load(states_ad)
-states = nfa['states']
-states = states.replace("{", "").replace("}", "").replace("'", "").split(',')
-alphabets = nfa['input_symbols']
-alphabets = alphabets.replace("{", "").replace("}", "").replace("'", "").split(',')
-fs_str = nfa['final_states'].replace("{", "").replace("}", "").replace("'", "").split(',')
-nodes = []
-starting_state_str = nfa['initial_state']
-tans = nfa["transitions"]
-
-for state in states :
-    n = Node(state , alphabets)
-    nodes.append(n)
-
-for key,value in tans.items():
-    start = find_node(key)
-    for key1,value1 in value.items():
-        end = value1.replace("{", "").replace("}", "").replace("'", "")
-        end = find_node(end)
-        if(key1==""): 
-            start.add_action("$",end)
-        else:
-            start.add_action(key1,end)
-    
-
-
-
+from Project1.auxiliaries import *
 
 
 final_i = []
@@ -59,10 +21,8 @@ def reachable(list , current_state):
     return list
 
 #reachable nodes from initial state
-starting_state = find_node(starting_state_str)
-fs = []
-for s in fs_str:
-    fs.append(find_node(s))
+states_ad = 'C:\git\TheoryofLanguagesAndAutomata\Project1\samples\phase2-sample\in\input1.json'
+alphabets, nodes, starting_state, fs = json2code(states_ad)
 R_nodes = reachable([starting_state] , starting_state)
 
 T1_rows = fs
