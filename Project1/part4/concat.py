@@ -1,7 +1,7 @@
 import json, sys, os
 from graphviz import Digraph
 SCRIPT_DIR = os.path.dirname(os.path.abspath('auxiliaries.py'))
-sys.path.append(os.path.dirname('C:\git\TheoryofLanguagesAndAutomata\Project1\auxiliaries.py'))
+sys.path.append(os.path.dirname('C:\git\TheoryofLanguagesAndAutomata\Project1\\auxiliaries.py'))
 
 from Project1.auxiliaries import *
 
