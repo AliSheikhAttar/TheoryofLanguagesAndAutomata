@@ -22,7 +22,7 @@ for fs in fs1:
 
 nodes1_no = len(nodes1)
 
-counter4name = nodes1_no-1
+counter4name = nodes1_no
 for i in range(len(nodes2)):
     nodes2[i].name = f"q{counter4name}"
     counter4name+=1
