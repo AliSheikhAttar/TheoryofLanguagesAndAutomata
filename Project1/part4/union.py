@@ -2,9 +2,9 @@ import json, sys, os
 from graphviz import Digraph
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath('auxiliaries.py'))
-sys.path.append(os.path.dirname('C:\git\TheoryofLanguagesAndAutomata\Project1\auxiliaries.py'))
+sys.path.append(os.path.dirname('C:\git\TheoryofLanguagesAndAutomata\Project1\\auxiliaries.py'))
 
-from Project1.auxiliaries import *
+from auxiliaries import *
 
 
 
@@ -39,5 +39,5 @@ for i in range(len(nodes2)):
 
 
 result = convert2json_NFA(nodes, alphabets, starting_node, fs)
-with open("output3.json", "w") as outfile:
+with open("output4.json", "w") as outfile:
     outfile.write(result)

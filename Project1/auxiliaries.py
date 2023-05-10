@@ -86,8 +86,8 @@ def convert2json_DFA(states, input_symbols, starting_node, fs):
             else:
                 transitions_str[f"{state.name}"][f"{input_symbol}"] = str(state.actions[input_symbol][0].name)
 
-    dictionary = {"states":items[0], "input_symbol": items[1],
-                 "transition":transitions_str,
+    dictionary = {"states":items[0], "input_symbols": items[1],
+                 "transitions":transitions_str,
                  "initial_state":str(starting_node.name), "final_states":items[2]}
 
     jsonFile = json.dumps(dictionary,indent=4)
@@ -131,8 +131,8 @@ def convert2json_NFA(states, input_symbols, starting_node, fs):
 
 
 
-    dictionary = {"states":items[0], "input_symbol": items[1],
-                 "transition":transitions_str,
+    dictionary = {"states":items[0], "input_symbols": items[1],
+                 "transitions":transitions_str,
                  "initial_state":str(starting_node.name), "final_states":items[2]}
 
     jsonFile = json.dumps(dictionary,indent=4)
