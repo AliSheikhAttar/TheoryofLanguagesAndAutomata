@@ -1,19 +1,22 @@
 {
-    "states": "{'q0','q1','q1','q2','q3'}",
-    "input_symbol": "{'1','2','a','b'}",
-    "transition": {
+    "states": "{'q0','q1','q2','q3','q4'}",
+    "input_symbols": "{'1','2','a','b'}",
+    "transitions": {
         "q0": {
             "1": "{'q0'}",
             "2": "{'q1'}"
         },
         "q1": {
-            "b": "{'q2'}"
+            "": "{'q2'}"
         },
         "q2": {
-            "a": "{'q3'}"
+            "b": "{'q3'}"
         },
-        "q3": {}
+        "q3": {
+            "a": "{'q4'}"
+        },
+        "q4": {}
     },
     "initial_state": "q0",
-    "final_states": "{'q3'}"
+    "final_states": "{'q4'}"
 }
