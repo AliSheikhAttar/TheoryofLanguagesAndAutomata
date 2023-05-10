@@ -1,7 +1,7 @@
 import json, sys, os
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath('auxiliaries.py'))
-sys.path.append(os.path.dirname('C:\git\TheoryofLanguagesAndAutomata\Project1\auxiliaries.py'))
+sys.path.append(os.path.dirname('C:\git\TheoryofLanguagesAndAutomata\Project1\\auxiliaries.py'))
 
 from auxiliaries import *
 
@@ -23,7 +23,14 @@ def reachable(list , current_state):
 #reachable nodes from initial state
 states_ad = 'C:\git\TheoryofLanguagesAndAutomata\Project1\samples\phase2-sample\in\input1.json'
 alphabets, nodes, starting_state, fs = json2code(states_ad)
+
+for s in nodes:
+    for a in alphabets:
+        s.actions[a] = s.actions[a][0]
+
+
 R_nodes = reachable([starting_state] , starting_state)
+R_nodes.sort(key=lambda ruba: int(ruba.name[1]))
 
 T1_rows = fs
 T2_rows = [node for node in R_nodes if node not in fs]
@@ -98,5 +105,5 @@ for action in T1_rows :
 for action in T2_rows :
     action.name = "f1"
    
-result = reduce_table(T, [notfinal_i, final_i], 0)
+result = (T, [notfinal_i, final_i], 0)
 print(result)
