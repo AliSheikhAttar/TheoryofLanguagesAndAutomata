@@ -10,7 +10,7 @@ final_i = []
 notfinal_i = [1]
 def reachable(list , current_state):
     for alphabet in alphabets:
-        next_s = current_state.actions[alphabet]
+        next_s = current_state.actions[alphabet][0]
         if next_s != [] and next_s not in list:
             list.append(next_s)
             if next_s in fs :
@@ -24,13 +24,8 @@ def reachable(list , current_state):
 states_ad = 'C:\git\TheoryofLanguagesAndAutomata\Project1\samples\phase2-sample\in\input1.json'
 alphabets, nodes, starting_state, fs = json2code(states_ad)
 
-for s in nodes:
-    for a in alphabets:
-        s.actions[a] = s.actions[a][0]
-
-
 R_nodes = reachable([starting_state] , starting_state)
-R_nodes.sort(key=lambda ruba: int(ruba.name[1]))
+names = [x.name for x in R_nodes]
 
 T1_rows = fs
 T2_rows = [node for node in R_nodes if node not in fs]
@@ -54,7 +49,7 @@ def make_table(table , table_rows):
 def are_same(row1 , row2):
     sameness = True
     for j in range(1 , len(alphabets)+1):
-        if row1[j].name != row2[j].name :
+        if row1[j][0].name != row2[j][0].name :
             sameness = False
     return sameness
 
@@ -105,5 +100,36 @@ for action in T1_rows :
 for action in T2_rows :
     action.name = "f1"
    
-result = (T, [notfinal_i, final_i], 0)
-print(result)
+result = reduce_table(T, [notfinal_i, final_i], 0)
+
+states = []
+fs = []
+namesofstates_l = []
+namesofstates_s = []
+
+
+for i in range(len(result)):
+    if(len(result[i])==0):
+        break
+    else:
+        newname = ""
+        for j in range(len(result[i])):
+            result[i].append(R_nodes[result[i][0]-1])
+            newname+=names[result[i][0]-1]
+            del result[i][0]
+        for state in result[i]:
+            state.name = newname
+        states.append(result[i][0])
+            
+
+
+for final_index in final_i:#passing element in states for names changes
+    fs.append(R_nodes[final_index-1])
+
+
+starting_state = states[0]
+
+json1 = convert2json_DFA(states,alphabets,starting_state,fs)
+
+with open("outputpart2.json", "w") as outfile:
+    outfile.write(json1)
