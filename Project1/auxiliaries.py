@@ -31,7 +31,8 @@ def json2code(states_ad):
 
     for state in states :
         n = Node(state , alphabets)
-        nodes.append(n)
+        if( n not in nodes):
+            nodes.append(n)
 
 
     landa_transitions = []

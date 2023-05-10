@@ -30,7 +30,7 @@ for s in nodes:
 
 
 R_nodes = reachable([starting_state] , starting_state)
-R_nodes.sort(key=lambda ruba: int(ruba.name[1]))
+# R_nodes.sort(key=lambda ruba: int(ruba.name[1]))
 
 T1_rows = fs
 T2_rows = [node for node in R_nodes if node not in fs]
@@ -105,5 +105,6 @@ for action in T1_rows :
 for action in T2_rows :
     action.name = "f1"
    
-result = (T, [notfinal_i, final_i], 0)
+result = reduce_table(T, [notfinal_i, final_i], 0)
 print(result)
+print('SlaAyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy')

@@ -32,7 +32,7 @@ def repeatd(arr):
 
     return result
 
-def e_closure(state , result):
+def e_closure(result):
     for s in result :
         e = s.actions["$"]
         if e == [] or e in result :
