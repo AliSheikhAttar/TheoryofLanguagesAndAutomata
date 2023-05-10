@@ -25,11 +25,7 @@ states_ad = 'C:\git\TheoryofLanguagesAndAutomata\Project1\samples\phase2-sample\
 alphabets, nodes, starting_state, fs = json2code(states_ad)
 
 R_nodes = reachable([starting_state] , starting_state)
-<<<<<<< HEAD
-# R_nodes.sort(key=lambda ruba: int(ruba.name[1]))
-=======
 names = [x.name for x in R_nodes]
->>>>>>> 306c3c430cc504d2b83921d5a3f054d81caa83b0
 
 T1_rows = fs
 T2_rows = [node for node in R_nodes if node not in fs]
@@ -105,10 +101,6 @@ for action in T2_rows :
     action.name = "f1"
    
 result = reduce_table(T, [notfinal_i, final_i], 0)
-<<<<<<< HEAD
-print(result)
-print('SlaAyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy')
-=======
 
 states = []
 fs = []
@@ -141,4 +133,3 @@ json1 = convert2json_DFA(states,alphabets,starting_state,fs)
 
 with open("outputpart2.json", "w") as outfile:
     outfile.write(json1)
->>>>>>> 306c3c430cc504d2b83921d5a3f054d81caa83b0
