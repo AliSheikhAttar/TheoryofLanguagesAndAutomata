@@ -36,5 +36,5 @@ starting_node = starting_node1
 fs = fs2
 
 result = convert2json_NFA(nodes, alphabets, starting_node, fs)
-with open("output2.json", "w") as outfile:
+with open("OutputPart4_concat.json", "w") as outfile:
     outfile.write(result)

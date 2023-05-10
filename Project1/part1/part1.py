@@ -64,7 +64,7 @@ def convert( states):
         newstate = []
         for state in states :
             newstate.extend(state.actions[alphabet])
-            newstate.extend(e_closure(state , newstate))
+            newstate.extend(e_closure(newstate))
         newstate = repeatd(newstate)
         rep =False
         for k in newstates:
@@ -145,5 +145,5 @@ for i in range(len(listofnode)):
 starting_node = listofnode[0]
 json1 = convert2json_DFA(listofnode,alphabets,starting_node,fss)
 
-with open("output1.json", "w") as outfile:
+with open("OutputPart1.json", "w") as outfile:
     outfile.write(json1)

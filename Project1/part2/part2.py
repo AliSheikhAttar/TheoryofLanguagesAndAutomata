@@ -131,5 +131,5 @@ starting_state = states[0]
 
 json1 = convert2json_DFA(states,alphabets,starting_state,fs)
 
-with open("outputpart2.json", "w") as outfile:
+with open("OutputPart2.json", "w") as outfile:
     outfile.write(json1)

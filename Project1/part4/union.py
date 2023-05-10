@@ -51,5 +51,5 @@ nodes.append(starting_node)
 
 
 result = convert2json_NFA(nodes, alphabets, starting_node, [finalstate])
-with open("output4.json", "w") as outfile:
+with open("OutputPart4_union.json", "w") as outfile:
     outfile.write(result)
