@@ -80,6 +80,7 @@ def convert( states):
 
 def listtonode(result):
     ListOfnode = []
+    trap = None
     for i in range(len(result)):
         if (len(result[i])!=0):
             node2append = Node1(alphabets=alphabets)
@@ -88,11 +89,11 @@ def listtonode(result):
                     node2append.add_name(result[i][j].name)
             ListOfnode.append(node2append)
         else:
-            toappend = Node1(alphabets)
-            toappend.name1 = []
-            toappend.name = "TRAP"
-            ListOfnode.append(toappend)
-    return ListOfnode
+            trap = Node1(alphabets)
+            trap.name1 = []
+            trap.name = "TRAP"
+            ListOfnode.append(trap)
+    return ListOfnode,trap
 
 
 
@@ -115,18 +116,19 @@ def addactions(result,listofnodes):
                         state2go.append(result[i][j].actions[a][k].name)
             findstate = find_node2(state2go,listofnodes)
             here_node = find_node2(names,listofnodes)
-            here_node.add_action(a,findstate)
+            if(findstate !=  None):
+                here_node.add_action(a,findstate)
+            else:
+                here_node.add_action(a,trap)
 
 
-
-
-address = 'C:\git\TheoryofLanguagesAndAutomata\Project1\samples\phase1-sample\in\input1.json'
+address = 'C:\git\TheoryofLanguagesAndAutomata\Project1\samples\phase1-sample\in\input2.json'
 alphabets, nodes, starting_node, fs = json2code(address)
 newstates = [Start(starting_node)]
 convert(newstates[0])
 result = newstates
-listofnode = listtonode(result)
-lr = addactions(result,listofnode)
+listofnode,trap = listtonode(result)
+addactions(result,listofnode)
 
 for node in listofnode:
     node.name1.sort(key=lambda x: int(x[1]))
@@ -142,8 +144,9 @@ for i in range(len(listofnode)):
             fss.append(listofnode[i])
             break
 
+
 starting_node = listofnode[0]
-json1 = convert2json_DFA(listofnode,alphabets,starting_node,fss)
+json1 = convert2json(listofnode,alphabets,starting_node,fss)
 
 with open("OutputPart1.json", "w") as outfile:
     outfile.write(json1)

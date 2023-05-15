@@ -14,6 +14,6 @@ for s in fs:
 starting_state.add_action("$",fs[0])
 
 
-result = convert2json_NFA(nodes, alphabets, starting_state, fs)
+result = convert2json(nodes, alphabets, starting_state, fs)
 with open("OutputPart4_star.json", "w") as outfile:
     outfile.write(result)

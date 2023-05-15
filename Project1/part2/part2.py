@@ -47,11 +47,10 @@ def make_table(table , table_rows):
 
 
 def are_same(row1 , row2):
-    sameness = True
     for j in range(1 , len(alphabets)+1):
         if row1[j][0].name != row2[j][0].name :
-            sameness = False
-    return sameness
+            return False
+    return True
 
 
 def contains(list , node):
@@ -123,13 +122,13 @@ for i in range(len(result)):
             
 
 
-for final_index in final_i:#passing element in states for names changes
+for final_index in final_i:#passing element in states for names changing
     fs.append(R_nodes[final_index-1])
 
 
 starting_state = states[0]
 
-json1 = convert2json_DFA(states,alphabets,starting_state,fs)
+json1 = convert2json(states,alphabets,starting_state,fs)
 
 with open("OutputPart2.json", "w") as outfile:
     outfile.write(json1)

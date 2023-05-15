@@ -64,39 +64,8 @@ def json2code(states_ad):
 
 
 
-def convert2json_DFA(states, input_symbols, starting_node, fs):
-    states_str = "{"
-    input_symbols_str = "{"
-    final_states_str = "{"
-    for state in states:
-        states_str += f"'{state.name}',"
-    for input_symbol in input_symbols:
-        input_symbols_str += f"'{input_symbol}',"
-    for final_state in fs:
-        final_states_str += f"'{final_state.name}',"
-    items = [states_str, input_symbols_str, final_states_str]
-    for i in range(len(items)):
-        items[i] = items[i][:-1]
-        items[i]+="}"
-    transitions_str = {}
-    for state in states:
-        transitions_str[f"{state.name}"] = {}
-        for input_symbol in input_symbols:
-            if(len(state.actions[input_symbol])==0): 
-                transitions_str[f"{state.name}"][f"{input_symbol}"] = "TRAP"
-            else:
-                transitions_str[f"{state.name}"][f"{input_symbol}"] = str(state.actions[input_symbol][0].name)
 
-    dictionary = {"states":items[0], "input_symbols": items[1],
-                 "transitions":transitions_str,
-                 "initial_state":str(starting_node.name), "final_states":items[2]}
-
-    jsonFile = json.dumps(dictionary,indent=4)
-    return jsonFile
-     
-
-
-def convert2json_NFA(states, input_symbols, starting_node, fs):
+def convert2json(states, input_symbols, starting_node, fs):
     states_str = "{"
     input_symbols_str = "{"
     final_states_str = "{"

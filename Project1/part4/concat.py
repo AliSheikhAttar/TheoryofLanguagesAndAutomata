@@ -6,8 +6,6 @@ sys.path.append(os.path.dirname('C:\git\TheoryofLanguagesAndAutomata\Project1\\a
 from auxiliaries import *
 
 
-
-
 states_ad1 = ('C:\git\TheoryofLanguagesAndAutomata\Project1\samples\phase4-sample\concat\in\FA1.json')
 
 states_ad2 = ('C:\git\TheoryofLanguagesAndAutomata\Project1\samples\phase4-sample\concat\in\FA2.json')
@@ -35,6 +33,6 @@ nodes = nodes1
 starting_node = starting_node1
 fs = fs2
 
-result = convert2json_NFA(nodes, alphabets, starting_node, fs)
+result = convert2json(nodes, alphabets, starting_node, fs)
 with open("OutputPart4_concat.json", "w") as outfile:
     outfile.write(result)
