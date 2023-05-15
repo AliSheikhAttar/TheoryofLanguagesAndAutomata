@@ -14,7 +14,7 @@ def reachable(list , current_state):
         if next_s != [] and next_s not in list:
             list.append(next_s)
             if next_s in fs :
-                final_i.append(list.index(next_s)+1)
+                final_i.append(list.index(next_s)+1) 
             else :
                 notfinal_i.append(list.index(next_s)+1)
             reachable(list, next_s)

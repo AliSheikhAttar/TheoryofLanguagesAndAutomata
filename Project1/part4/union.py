@@ -28,7 +28,7 @@ starting_node = new_starting_state
 
 
 
-nodes1_no = len(nodes1) - len(alphabets2)
+nodes1_no = len(nodes1) - len(nodes2)
 
 
 counter4name = nodes1_no-1
