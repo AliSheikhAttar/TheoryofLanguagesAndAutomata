@@ -9,6 +9,6 @@ Part3:<br />
 accept string <br />
 Part4:<br />
 star, concat and union<br />
-install all requirments<br />
+install all requirements<br />
 use main.py to visualize FAs<br />
 Collaborators : [sabakianoosh](https://github.com/sabakianoosh)
