@@ -1,10 +1,10 @@
 # TheoryofLanguagesAndAutomata
 Projects of TLA <br />
-Project1:
+Project1:<br />
 Part1:<br />
 Convert NFA to DFA<br />
 Part2:<br />
-minimize DFA
+minimize DFA<br />
 Part3:<br />
 accept string <br />
 Part4:<br />
