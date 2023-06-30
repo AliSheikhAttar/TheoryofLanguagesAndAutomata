@@ -70,7 +70,7 @@ for key,_ in grammar.items():
 print(grammar)
 #removing useless variables
 ##not reachable
-reachables = [S]
+reachables = ['S']
 counter = 0
 while(counter<len(reachables)):
     new_reachables = grammar[reachables[counter]]
@@ -81,7 +81,7 @@ while(counter<len(reachables)):
     counter += 1
 
 to_delete = None
-while(len(to_delete)!=len(reachables)):
+while(len(grammar)!=len(reachables)):
     for key,_ in grammar.items():
         if(key not in reachables):
             to_delete = key
@@ -102,22 +102,15 @@ while(tocontinue):
     tocontinue = False
     for key, value in grammar.items():
         for val in value:
-            state = True
-            for char in val:
-                if(char in producing_terminals):
-                    break
-                elif(ord(char)<97):
-                    state = False
-                    break
-
-            if(state and key not in producing_terminals):
+            x = [True for char in val if(char in producing_terminals)]
+            if((len(x)!=0 and False not in x  or len(val)==1 and ord(val)>=97) and key not in producing_terminals):
                 producing_terminals.append(key)
                 tocontinue = True
                 break
-                   
 
 to_delete = None
-while(len(to_delete)!=len(producing_terminals)):
+to_remove = []
+while(len(grammar)!=len(producing_terminals)):
     for key,_ in grammar.items():
         if(key not in producing_terminals):
             to_delete = key
@@ -127,6 +120,58 @@ while(len(to_delete)!=len(producing_terminals)):
     for key,value in grammar.items():
         for val in value:
             if(to_delete in val):
-                value.remove(val)
+                to_remove.append(val)
+        for item in to_remove:
+            value.remove(item)
+        to_remove = []
 
+print(grammar)
 #converting to chomsky
+##two variables on the right
+counterT = 0
+counterV = 0
+counter1 = 0
+state = True
+to_add = None
+keys = []    
+for key,_ in grammar.items(): #no need to check keys appended
+    keys.append(key) 
+for key in keys:
+    for i in range(len(grammar[key])):
+        if(len(grammar[key][i])>2):
+            to_add = grammar[key][i][1:len(grammar[key][i])]
+            grammar[key][i] = grammar[key][i][0]+ 'V' + str(counterV)
+            for i in range(len(to_add)-2):
+                grammar['V' + str(counterV)] = [to_add[0]+ 'V' + str(counterV+1)]
+                counterV += 1
+            grammar['V' + str(counterV)] = [to_add[-2] + to_add[-1]]
+            counterV+=1
+
+
+print(grammar)
+##only one terminal right
+state = True 
+terminal = None 
+keys = []
+for key,_ in grammar.items(): #no need to check keys appended
+    keys.append(key)  
+for key in keys:
+    for i in range(len(grammar[key])):
+        if(len(grammar[key][i])>=2):
+            x = [k for k in range(len(grammar[key][i])) if(ord(grammar[key][i][k])>=97)]
+            if(len(x)!=0):
+                for o in range(len(x)):
+                    x[o] += o
+                for j in (x):
+                    terminal = grammar[key][i][j]
+                    if(j!=0):
+                        grammar[key][i] = grammar[key][i][0:j] + 'T' + str(counterT) + grammar[key][i][j+1::]
+                    else:
+                        grammar[key][i] = 'T' + str(counterT) + grammar[key][i][1::]
+                    grammar['T' + str(counterT)] = [terminal]
+                    counterT += 1
+
+
+print(grammar)
+
+#CYK
