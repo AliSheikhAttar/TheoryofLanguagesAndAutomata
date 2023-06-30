@@ -6,6 +6,7 @@ for i in range(n):
     Rvariables = production[1].replace('<', '').replace('>', '').replace(' ', '').split('|')
     grammar[Lvariable] = Rvariables
 
+w = input()
 
 #removing Nullable variables
 nullable_variable = None
@@ -37,7 +38,7 @@ for key,_ in grammar.items():
     
 
 
-print(grammar)
+
 #removing unit-productions
 unit_production_L = None
 unit_production_R = None
@@ -67,7 +68,7 @@ while(state):
 for key,_ in grammar.items():
     grammar[key] = list(dict.fromkeys(grammar[key]))
 
-print(grammar)
+
 #removing useless variables
 ##not reachable
 reachables = ['S']
@@ -125,12 +126,10 @@ while(len(grammar)!=len(producing_terminals)):
             value.remove(item)
         to_remove = []
 
-print(grammar)
+
 #converting to chomsky
 ##two variables on the right
-counterT = 0
-counterV = 0
-counter1 = 0
+counter = 0
 state = True
 to_add = None
 keys = []    
@@ -140,15 +139,15 @@ for key in keys:
     for i in range(len(grammar[key])):
         if(len(grammar[key][i])>2):
             to_add = grammar[key][i][1:len(grammar[key][i])]
-            grammar[key][i] = grammar[key][i][0]+ 'V' + str(counterV)
+            grammar[key][i] = grammar[key][i][0]+ 'T' + str(counter)
             for i in range(len(to_add)-2):
-                grammar['V' + str(counterV)] = [to_add[0]+ 'V' + str(counterV+1)]
-                counterV += 1
-            grammar['V' + str(counterV)] = [to_add[-2] + to_add[-1]]
-            counterV+=1
+                grammar['T' + str(counter)] = [to_add[0]+ 'T' + str(counter+1)]
+                counter += 1
+            grammar['T' + str(counter)] = [to_add[-2] + to_add[-1]]
+            counter+=1
 
 
-print(grammar)
+
 ##only one terminal right
 state = True 
 terminal = None 
@@ -165,13 +164,54 @@ for key in keys:
                 for j in (x):
                     terminal = grammar[key][i][j]
                     if(j!=0):
-                        grammar[key][i] = grammar[key][i][0:j] + 'T' + str(counterT) + grammar[key][i][j+1::]
+                        grammar[key][i] = grammar[key][i][0:j] + 'T' + str(counter) + grammar[key][i][j+1::]
                     else:
-                        grammar[key][i] = 'T' + str(counterT) + grammar[key][i][1::]
-                    grammar['T' + str(counterT)] = [terminal]
-                    counterT += 1
+                        grammar[key][i] = 'T' + str(counter) + grammar[key][i][1::]
+                    grammar['T' + str(counter)] = [terminal]
+                    counter += 1
 
 
-print(grammar)
+
 
 #CYK
+to_delete_keys = []
+CYK_Matrix = [ [[] for j in range(len(w)- i)] for i in range(len(w))]
+CYK_Matrix[0] = [[x] for x in w]
+for j in range(len(CYK_Matrix[0])):
+    for key, value in grammar.items():
+        if(CYK_Matrix[0][j][0] in value):
+            CYK_Matrix[0][j].append(key)
+
+    del CYK_Matrix[0][j][0]
+
+# Deleting terminal productions since they wont be checked
+for key,value in grammar.items():
+    for val in value:
+        if(len(val)==1 and ord(val)>= 97):
+            grammar[key].remove(val)
+
+    if(len(value)==0):
+        to_delete_keys.append(key)
+
+for item in to_delete_keys:
+    del grammar[item]
+
+#CYK Filling
+for i in range(1,len(w)):
+    for j in range(len(CYK_Matrix[i])):
+        for key, value in grammar.items():
+            for k in range(len(CYK_Matrix[i-1][j])):
+                for t in range(len(CYK_Matrix[0][i])):
+                    if((CYK_Matrix[i-1][j][k] + CYK_Matrix[0][i][t]) in value):
+                        if(key not in CYK_Matrix[i][j]):
+                            CYK_Matrix[i][j].append(key)
+            for k1 in range(len(CYK_Matrix[i-1][j+1])):
+                for t1 in range(len(CYK_Matrix[0][j])):
+                    if((CYK_Matrix[0][j][t1] + CYK_Matrix[i-1][j+1][k1]) in value):
+                        if(key not in CYK_Matrix[i][j]):
+                            CYK_Matrix[i][j].append(key)
+#Acceptance
+if('S' in CYK_Matrix[-1][-1]):
+    print("Accepted")
+else:
+    print("Rejected")
