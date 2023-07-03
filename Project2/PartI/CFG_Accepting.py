@@ -1,20 +1,69 @@
 n = int(input())
 grammar = {}
-initial = None
 variables = []
+
+class variable:
+    def __init__(self, s, is_terminal, is_initial = False):
+        self.name = s
+        self.is_terminal = is_terminal
+        self.is_initial = is_initial
+
+def search_var(var):
+    for item in variables:
+        if(item.name == var):
+            return item
+    return None
+
+
+def search_var_byname(name):
+    for item in variables:
+        if(item.name == name):
+            return item
+
+def find_initial():
+    for key,_ in grammar.items():
+        if(key.is_initial):
+            return key
+
+def included(item, in_list):
+    for x in in_list:
+        if(x == item and x[0] == item[0]):
+            return True
+
 for i in range(n):
     production = input().split('->')
     Lvariable = production[0].replace('<', '').replace('>', '').replace(' ', '')
     Rvariables = production[1].replace('<', '').replace('>', '').replace(' ', '').split('|')
-    grammar[Lvariable] = Rvariables
-    if(i==0):
-        initial = Lvariable
-    if(Lvariable not in variables):
-        variables.append(Lvariable)
+    res = search_var(Lvariable)
+    if(res == None):
+        variables.append(variable(Lvariable,False))
+        grammar[search_var(Lvariable)] = []
+        
+    else:
+        grammar[search_var(Lvariable)] = []
+    
+   
     for var in Rvariables:
+        x = []
         for char in var:
-            if(65<=ord(char)<=90 and char not in variables):
-                variables.append(char) 
+            res = search_var(char)
+            if(res != None):
+                x.append(search_var(char))
+            else:
+                if(65<=ord(char)<=90):
+                    y = variable(char, False)
+                    x.append(y)
+                else:
+                    y = variable(char, True)
+                    x.append(y)  
+                variables.append(y)
+
+        grammar[search_var(Lvariable)].append(x)
+
+    if(i==0):
+        search_var(Lvariable).is_initial = True
+
+
 
 w = input()
 
@@ -24,62 +73,73 @@ def Simplification():
     nullable_variable = None
     to_delete = None
     state = True
+    lam = search_var('#')
     while(state):
         state = False
-        for key,value in grammar.items():
-            if('#' in value):
+        for key, value in grammar.items():
+            for var in value:
+                if(lam) in var:
+                    state = True
+                    var.remove(lam)
+                    for _, value1 in grammar.items():
+                        state1 = False
+                        for val in value1:
+                            if(key in val):
+                                state1 = True
+                                new_val = val.copy()
+                                new_val.remove(key)
+                                value1.append(new_val)
+                                break
+
+
+
+
+ 
+    state = True
+    while(state):
+        state = False
+        for key, value in grammar.items():
+            if((value)==0):
+                del grammar[key]
                 state = True
-                value.remove('#')
-                nullable_variable = key
-                if(len(value)==0):
-                    to_delete = key
-                for _, value1 in grammar.items():
-                    for val in value1:
-                        if(nullable_variable in val):
-                            value1.append(val.replace(nullable_variable, '#'))
-
-        if(to_delete!= None):
-            del grammar[to_delete]
-            to_delete = None
-
-    for key,_ in grammar.items():
-        grammar[key] = list(dict.fromkeys(grammar[key]))
-        for i in range(len(grammar[key])):
-            if('#' in grammar[key][i]):
-                grammar[key][i]  = grammar[key][i] .replace('#','')
+                break
+            else:
+                for val in value:
+                    if(len(val)==0):
+                        value.remove(val)
+                        state = True
+                        break
+            if(state):
+                break
+            
         
 
 
     if(len(grammar) == 0):
         return False
     #removing unit-productions
-    unit_production_L = None
-    unit_production_R = None
-    to_delete = None
     state = True
     while(state):
         state = False
         for key,value in grammar.items():
             for val in value:
-                if(len(val)==1 and 65<=ord(val)<=90):
+                if(len(val)==1 and not val[0].is_terminal):
                     state = True
-                    unit_production_L = key
-                    unit_production_R = val
                     value.remove(val)
-                    if(len(value)==0):
-                        to_delete = key
-                    for key1, value1 in grammar.items():
-                        if(key1 == unit_production_R):
-                            value.extend(value1)
-                            value = list(dict.fromkeys(value))
-                            break
+                    if(val[0] in grammar):
+                        for val1 in grammar[val[0]]:
+                            if(val1 not in value):
+                                value.append(val1)
+                    break
 
-        if(to_delete!= None):
-            del grammar[to_delete]
-            to_delete = None
+    while(state):
+        state = False
+        for key, value in grammar.items():
+            if((value)==0):
+                del grammar[key]
+                state = True
+                break
 
-    for key,_ in grammar.items():
-        grammar[key] = list(dict.fromkeys(grammar[key]))
 
     if(len(grammar) == 0):
         return False
@@ -92,64 +152,60 @@ def Simplification():
         tocontinue = False
         for key, value in grammar.items():
             for val in value:
-                x = [True for char in val if(char in producing_terminals)]
-                if((len(x)!=0 and False not in x  or len(val)==1 and (ord(val)<65 or ord(val)>90)) and key not in producing_terminals):
+                x = [(char.is_terminal or char in producing_terminals) for char in val ] 
+                if((False not in x ) and (key not in producing_terminals)):
                     producing_terminals.append(key)
                     tocontinue = True
                     break
 
-    to_delete = [var for var in variables if(var not in grammar)]
-    to_delete_key = None
-    to_remove = []
 
-    while(len(grammar)!=len(producing_terminals)):
-        for key,_ in grammar.items():
-            if(key not in producing_terminals):
-                to_delete.append(key)
-                to_delete_key = key
-                break
+    notproducing_terminals = [var for var in variables if(not var.is_terminal and (var not in producing_terminals))]
+    for notproducing_terminal in notproducing_terminals:
+        if(notproducing_terminal in grammar):
+            del grammar[notproducing_terminal]
+            variables.remove(notproducing_terminal)
 
-        del grammar[to_delete_key]
         for key,value in grammar.items():
-            for val in value:
-                for item in to_delete:
-                    if(item in val):
-                        to_remove.append(val)
-            for item in to_remove:
-                value.remove(item)
-            to_remove = []
+            grammar[key] = list(filter(lambda x: notproducing_terminal not in x,value))
 
 
     if(len(grammar) == 0):
         return False
     ##not reachable
-    reachables = [initial]
+    state = True
+    while(state):
+        state = False
+        for var in variables:
+            if(not var.is_terminal and var not in grammar):
+                state = True
+                for key, value in grammar.items():
+                    grammar[key] = list(filter(lambda x: var not in x,value))
+                variables.remove(var)
+                break
+    
+
+    reachables = [find_initial()]
     counter = 0
     while(counter<len(reachables)):
-        if(reachables[counter] in grammar):
-            new_reachables = grammar[reachables[counter]]
-        else:
-            reachables.remove(reachables[counter])
-            continue
-
-        for product in new_reachables:
-            for char in product:
-                if(65<=ord(char)<=90 and char not in reachables):
-                    reachables.append(char)
-        counter += 1
-
-    to_delete = None
-    while(len(grammar)!=len(reachables)):
-        for key,_ in grammar.items():
-            if(key not in reachables):
-                to_delete = key
+        for val in grammar[reachables[counter]]:
+            for char in val:
+                if(not char.is_terminal and char not in reachables):
+                    reachables.append(char)        
+        counter+=1
+       
+    state = True
+    while(state):
+        state = False
+        for var1 in variables:
+            if(var1 not in reachables and not var1.is_terminal):
+                state = True
+                if(var1 in grammar):
+                    del grammar[var1]
+        
+                for key, value in grammar.items():
+                    grammar[key] = list(filter(lambda x: var1 not in x,value))
+                variables.remove(var1)
                 break
-
-        del grammar[to_delete]
-        for key,value in grammar.items():
-            for val in value:
-                if(to_delete in val):
-                    value.remove(val)
 
     if(len(grammar) == 0):
         return False
@@ -164,84 +220,90 @@ def convert2chomsky():
     counter = 0
     state = True
     to_add = None
-    keys = []    
+    keys = [] 
+    new_value = []   
     for key,_ in grammar.items(): #no need to check keys appended
         keys.append(key) 
     for key in keys:
         for i in range(len(grammar[key])):
             if(len(grammar[key][i])>2):
-                to_add = grammar[key][i][1:len(grammar[key][i])]
-                grammar[key][i] = grammar[key][i][0]+ 'T' + str(counter)
-                for i in range(len(to_add)-2):
-                    grammar['T' + str(counter)] = [to_add[0]+ 'T' + str(counter+1)]
-                    counter += 1
-                grammar['T' + str(counter)] = [to_add[-2] + to_add[-1]]
+                vg = (variable('T' + str(counter), False))
+                variables.append(vg)
+                j1 = 1
+                for j in range(1,len(grammar[key][i])-2):
+                    v1 = (variable('T' + str(counter), False))
+                    grammar[variables[-1]] = [[grammar[key][i][j],  v1]]
+                    variables.append(v1)
+                    counter+=1
+                    j1 += 1
+                
+                grammar[variables[-1]] = [[grammar[key][i][j1], grammar[key][i][j1+1]]]
+                grammar[key][i] = [grammar[key][i][0], search_var_byname('T' + str(counter-j1+1))]
                 counter+=1
+                
+
+
 
 
 
     ##only one terminal right
-    state = True 
-    terminal = None 
     keys = []
     for key,_ in grammar.items(): #no need to check keys appended
         keys.append(key)  
     for key in keys:
         for i in range(len(grammar[key])):
-            if(len(grammar[key][i])>=2):
-                x = [k for k in range(len(grammar[key][i])) if( ord(grammar[key][i][k])<65 or ord(grammar[key][i][k])>90)]
+            if(len(grammar[key][i])==2):
+                x = [k for k in range(len(grammar[key][i])) if(grammar[key][i][k].is_terminal)]
                 if(len(x)!=0):
-                    for o in range(len(x)):
-                        x[o] += o
                     for j in (x):
-                        terminal = grammar[key][i][j]
-                        if(j!=0):
-                            grammar[key][i] = grammar[key][i][0:j] + 'T' + str(counter) + grammar[key][i][j+1::]
-                        else:
-                            grammar[key][i] = 'T' + str(counter) + grammar[key][i][1::]
-                        grammar['T' + str(counter)] = [terminal]
+                        vg = variable('T' + str(counter),False)
+                        grammar[vg] = [[grammar[key][i][j]]]
+                        grammar[key][i][j] = vg  
+                        variables.append(vg)
                         counter += 1
 
 
 
 #CYK
+
+
+
 def CYK_Matrix():
     to_delete_keys = []
-    CYK_Matrix = [ [[] for j in range(len(w)- i)] for i in range(len(w))]
+    CYK_Matrix = [ [[] for j in range(len(w)- i)] for i in range(len(w)) ]
     CYK_Matrix[0] = [[x] for x in w]
     for j in range(len(CYK_Matrix[0])):
         for key, value in grammar.items():
-            if(CYK_Matrix[0][j][0] in value):
+            if([search_var_byname(CYK_Matrix[0][j][0])] in value):
                 CYK_Matrix[0][j].append(key)
 
         del CYK_Matrix[0][j][0]
 
     # Deleting terminal productions since they won't be checked
-    for key,value in grammar.items():
-        for val in value:
-            if(len(val)==1 and(ord(val)<65 or ord(val)>90)):
-                grammar[key].remove(val)
+    state = True
+    while(state):
+        state = False
+        for key,value in grammar.items():
+            for val in value:
+                if(len(val)==1 and val[0].is_terminal):
+                    state = True
+                    grammar[key].remove(val)
 
-        if(len(value)==0):
-            to_delete_keys.append(key)
+            if(len(value)==0):
+                del grammar[key]
+                break
 
-    for item in to_delete_keys:
-        del grammar[item]
 
     #CYK Filling
     for i in range(1,len(w)):
         for j in range(len(CYK_Matrix[i])):
             for key, value in grammar.items():
-                for k in range(len(CYK_Matrix[i-1][j])):
-                    for t in range(len(CYK_Matrix[0][i])):
-                        if((CYK_Matrix[i-1][j][k] + CYK_Matrix[0][i][t]) in value):
-                            if(key not in CYK_Matrix[i][j]):
-                                CYK_Matrix[i][j].append(key)
-                for k1 in range(len(CYK_Matrix[i-1][j+1])):
-                    for t1 in range(len(CYK_Matrix[0][j])):
-                        if((CYK_Matrix[0][j][t1] + CYK_Matrix[i-1][j+1][k1]) in value):
-                            if(key not in CYK_Matrix[i][j]):
-                                CYK_Matrix[i][j].append(key)
+                for z in range(1,i+1):
+                    for k in range(len(CYK_Matrix[i-z][j])):
+                        for t in range(len(CYK_Matrix[z-1][i+j-z+1])):
+                            if(included([CYK_Matrix[i-z][j][k], CYK_Matrix[z-1][i+j-z+1][t]],value)):
+                                if(key not in CYK_Matrix[i][j]):
+                                    CYK_Matrix[i][j].append(key)
 
     return CYK_Matrix
 
@@ -254,7 +316,7 @@ else:
     print("Rejected")
 #Acceptance
 if(stateofgrammar):
-    if(initial in CYK[-1][-1]):
+    if(find_initial() in CYK[-1][-1]):
         print("Accepted")
     else:
         print("Rejected")
