@@ -18,11 +18,27 @@ NumberOftransitions = int(input())
 for i in range(NumberOftransitions):
     Transitions.append(input().replace('(', '').replace(')', '').replace(' ', '').split(','))
 
+w = input()
+
 # Modification PDA
 
 ## Unique final state
 def unique_final_state():
-    if(len(Finals)>1):
+
+    if(len(Finals)==1):
+        new_f_name = 'qf'
+        for Transition in Transitions:
+            if(Transition[0] == Finals[0]):
+                Transition[0] = new_f_name
+            if(Transition[-1] == Finals[0]):
+                Transition[-1] = new_f_name
+        
+        for i in range(len(States)):
+            if(States[i] == Finals[0]):
+                States[i] = new_f_name
+                break   
+        
+    else:
     #naming the new states
         q_counter = len(States)-len(Finals)
         Final = 'qf'
@@ -47,6 +63,8 @@ def unique_final_state():
                     break
             
             q_counter += 1
+        
+
 
 
 
@@ -73,7 +91,6 @@ def unique_final_state():
 
 
         States.append(Final)
-
 
 ## convert the lambda pop
 
@@ -164,29 +181,7 @@ def Create_CFG():
 
 # Print Grammar
 def Print_Grammar_double_production():
-    starting_var = Start_variable[0]
-    key_str  = '(' + '<' + starting_var.split(',')[0] + '>' + starting_var.split(',')[1] + '<' + starting_var.split(',')[2] + '>' + ')'
-    c = 0
-    val_str = ''
-    for i in range(len(grammar[starting_var])):
-        val_str += grammar[starting_var][i][0]
-        if(len(grammar[starting_var][i]) != 1) :
-            for k in range(1, 3):
-                val_str += '(' + '<' + grammar[starting_var][i][k].split(',')[0] + '>' + grammar[starting_var][i][k].split(',')[1] + '<' + grammar[starting_var][i][k].split(',')[2] + '>' + ')'
-        val_str += ' | '
-        c += 1
-        if(c==2):
-            val_str = val_str[:len(val_str)-2]  # remove the last ' | ' added
-            print(key_str + '  --->  ' + val_str)
-            val_str = ''
-            c = 0
-    if(val_str != ''):
-        val_str = val_str[:len(val_str)-2]  # remove the last ' | ' added
-        print(key_str + '  --->  ' + val_str)
-        val_str = ''
-        c = 0
-
-    for key in [x for x in grammar.keys() if(x!= starting_var)]:
+    for key in grammar.keys():
         key_str  = '(' + '<' + key.split(',')[0] + '>' + key.split(',')[1] + '<' + key.split(',')[2] + '>' + ')'
         c = 0
         val_str = ''
@@ -209,18 +204,8 @@ def Print_Grammar_double_production():
             c = 0
 
 def Print_Grammar_single_production():
-    starting_var = Start_variable[0]
-    key_str  = '(' + '<' + starting_var.split(',')[0] + '>' + starting_var.split(',')[1] + '<' + starting_var.split(',')[2] + '>' + ')'
-    val_str = ''
-    for i in range(len(grammar[starting_var])):
-        val_str += grammar[starting_var][i][0]
-        if(len(grammar[starting_var][i]) != 1) :
-            for k in range(1, 3):
-                val_str += '(' + '<' + grammar[starting_var][i][k].split(',')[0] + '>' + grammar[starting_var][i][k].split(',')[1] + '<' + grammar[starting_var][i][k].split(',')[2] + '>' + ')'
-        print(key_str + '  --->  ' + val_str)
-        val_str = ''
 
-    for key in [x for x in grammar.keys() if(x!= starting_var)]:
+    for key in grammar.keys():
         key_str  = '(' + '<' + key.split(',')[0] + '>' + key.split(',')[1] + '<' + key.split(',')[2] + '>' + ')'
         val_str = ''
         for i in range(len(grammar[key])):
@@ -231,7 +216,7 @@ def Print_Grammar_single_production():
             print(key_str + '  --->  ' + val_str)
             val_str = ''
             c = 0            
-            
+             
 # Converting PDA to CFG
 unique_final_state()
 lambda_pop()
@@ -239,5 +224,6 @@ length1_push_elements()
 Length2more_push_elements()
 Create_CFG()
 # Either way:
+print("Grammar : ")
 Print_Grammar_double_production()
 # Print_Grammar_single_production()
