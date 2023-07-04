@@ -81,15 +81,28 @@ def Simplification():
                 if(lam) in var:
                     state = True
                     var.remove(lam)
+                    if(len(var) == 0):
+                        value.remove(var)
                     for _, value1 in grammar.items():
-                        state1 = False
-                        for val in value1:
-                            if(key in val):
-                                state1 = True
-                                new_val = val.copy()
-                                new_val.remove(key)
-                                value1.append(new_val)
-                                break
+                        state1 = True
+                        ln = len(value1)
+                        i = 0
+                        while(state1 and i<ln):
+                            state1 = False
+                            for i in range(ln):
+                                if(key in value1[i]):
+                                    state1 = True
+                                    new_val = value1[i].copy()
+                                    new_val.remove(key)
+                                    if(len(new_val)!= 0):
+                                        value1.append(new_val)
+                                    else:
+                                        value1.append([search_var_byname('#')])
+                                if(i==ln-1):
+                                    state1 = False
+                                    
+                    if(state):
+                        break
 
 
 
